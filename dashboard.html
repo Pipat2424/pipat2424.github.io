@@ -103,5 +103,38 @@
             <a href="#" class="btn" onclick="alert('System Online!')">🔄 Refresh</a>
         </div>
     </div>
+
+    <script>
+        // TUDEALS Real-time API
+        const TUDEALS_API_URL = 'https://script.google.com/macros/s/AKfycbySKxuE0XH2vYCFyCPzhBtgQZm0LSEXcNv1ra77SLVsM_O1FZ1K_CwI-1hZx1W273jD_g/exec';
+
+        async function updateStats() {
+            try {
+                const response = await fetch(TUDEALS_API_URL);
+                const data = await response.json();
+                
+                // Update dashboard values
+                document.getElementById('products').textContent = data.จำนวนสินค้า || '0';
+                document.querySelector('.stat-value:nth-child(2)').parentElement.querySelector('.stat-value').textContent = data.แคมเปญที่ใช้งาน || '0';
+                
+                // Format revenue and commission with Thai Baht
+                const revenue = parseFloat(data.รายได้รวม) || 0;
+                const commission = parseFloat(data.คอมมิชชัน) || 0;
+                
+                document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = '฿' + revenue.toFixed(2);
+                document.querySelector('.stat-card:nth-child(4) .stat-value').textContent = '฿' + commission.toFixed(2);
+                
+                console.log('✅ Dashboard updated:', data);
+            } catch (error) {
+                console.error('❌ Error fetching TUDEALS data:', error);
+            }
+        }
+
+        // Update on page load
+        updateStats();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(updateStats, 30000);
+    </script>
 </body>
 </html>
